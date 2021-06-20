@@ -23,6 +23,22 @@ public class DAO_RegistroTabla extends Conexion{
         close();
     }
     
+    /*
+    public void editarRegistro(String nombreNuevo, String datoNuevo, String nombreAntiguo, String datoAntiguo, String idMes) throws SQLException{
+        ejecutar("UPDATE registroDatosFlujo SET accion = '"+nombreNuevo+"', dato = '"+datoNuevo+"' where accion = '"+nombreAntiguo+"' and dato = '"+datoAntiguo+"' and idMes= '"+idMes+"';");
+        close();
+    }*/
+    
+    public void editarRegistroSinMes(String nombreNuevo, String datoNuevo, String nombreAntiguo, String datoAntiguo) throws SQLException{
+        ejecutar("UPDATE registroDatosFlujo SET accion = '"+nombreNuevo+"', dato = '"+datoNuevo+"' where accion = '"+nombreAntiguo+"' and dato = '"+datoAntiguo+"';");
+        close();
+    }
+    
+    public void editarDato(String datoNuevo, String datoAntiguo, String idFlujo, String idMes) throws SQLException{
+        ejecutar("UPDATE registroDatosFlujo SET dato = '"+datoNuevo+"' Where dato = '"+datoAntiguo+"' AND idFlujo = '"+idFlujo+"' AND idMes='"+idMes+"';");
+        close();
+    }
+    
     public List<registroDatosFlujo> getRegistrosIngresoPorId(int idFlujo) throws SQLException{
         ResultSet rs = ejecutar("SELECT * FROM registroDatosFlujo WHERE idFlujo = '"+idFlujo+"';");
         registroDatosFlujo registro = null;

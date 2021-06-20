@@ -99,6 +99,11 @@ select accion, dato, (select nombre from mes where id = idMes)
 from registroDatosFlujo where idFlujo = 1 group by accion;
 
 
+select * from registroDatosFlujo ;
+
+-- UPDATE registroDatosFlujo SET accion = 'accionNueva', dato = 'dato proveniente' where accion = 'accionAntigua' and dato = 'datoAntiguo';
+-- UPDATE registroDatosFlujo SET dato = '220000' Where dato = '210000' AND idFlujo = 1;
+
 -- SELECT * FROM registroDatosFlujo WHERE idFlujo = 1;
 -- SELECT accion from registroDatosFlujo where idFlujo = 1 AND idtipo = 1 group by accion;
 -- SELECT dato from registroDatosFlujo where idFlujo = 1 AND accion = 'sueldo';

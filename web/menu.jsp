@@ -97,7 +97,7 @@
                                         out.println("<td class=td><input type=text class=form-control value='" + accion + "'></td>");
                                         for (int j = 0; j < listaRegistro.size(); j++) {
                                             if (accion.equals(listaRegistro.get(j).getAccion())) {
-                                                out.println("<td class=td><input type=text class=form-control value='" + listaRegistro.get(j).getDato() + "'></td>");
+                                                out.println("<td class=td ><input type=text class=form-control value='" + listaRegistro.get(j).getDato() + "'></td>");
                                                 i++;
                                                 accionRepetida++;
                                             }
@@ -121,16 +121,16 @@
 
             <br>
             <hr>
-            
+
         </div>
-                
+
         <div class="container">
             <div class="table-responsive">
                 <table class="table table-bordered" id="tablaFinanzasDos">
                     <thead class="thead-dark">
                         <tr id="columnaTablaDos">
                             <th>Egresos</th>
-                            
+
                         </tr>
                     </thead>
                 </table>
@@ -145,7 +145,7 @@
             <hr>
             <button type="button" class="btn btn-success" id="guardarCambios" onclick="guardarCambios()">Guardar avance</button> 
         </div>
-                
+
         <% } else {%>
 
         <div class="container">
@@ -235,7 +235,7 @@
             else
                 table.deleteRow(rowCount - 1);
         }
-         
+
         function agregarFilaEgreso() {
             var row = document.getElementById("columnaTablaDos");
             var nColumnas = $("#tablaFinanzasDos tr:first th").length;
@@ -247,8 +247,8 @@
 
             document.getElementById("tablaFinanzasDos").insertRow(-1).innerHTML = texto;
         }
-        
-        function eliminarFilaEgreso(){
+
+        function eliminarFilaEgreso() {
             var table = document.getElementById("tablaFinanzasDos");
             var rowCount = table.rows.length;
             if (rowCount <= 1)
@@ -334,7 +334,7 @@
 
             acumulador = acumulador + 1;
         }
-        
+
 
         function eliminarColumna() {
             var table = document.getElementById("tablaFinanzas");
@@ -357,7 +357,7 @@
 
 
         }
-        
+
         var acumuladorEgreso = 0;
         function agregarColumnaEgreso(colCount) {
             var idMes = <%= lista.get(mesInicial + acumulador).getId()%>;
@@ -435,7 +435,7 @@
 
             acumuladorEgreso = acumuladorEgreso + 1;
         }
-        
+
         function eliminarColumnaEgreso() {
             var table = document.getElementById("tablaFinanzasDos");
             //var nColumnas = $("#tablaFinanzas tr:first th").length;
@@ -488,7 +488,7 @@
                 egresos.push(elemento.innerText);
             });
             let datosEgresos = [];
-            document.querySelectorAll('#tablaFinanzasDos thead tr').forEach(fila =>{
+            document.querySelectorAll('#tablaFinanzasDos thead tr').forEach(fila => {
                 let datoEgreso = {};
                 egresos.forEach(campo => {
                     datoEgreso[campo] = '';
@@ -504,8 +504,8 @@
                 });
                 datosEgresos.push(datoEgreso);
             });
-            
-            
+
+
         <%
             if (mesInicial == -1) {
                 mesInicial = 1;
@@ -531,6 +531,89 @@
         $(document).on('click', 'input', function () {
             $(this).prop('readonly', false);
         });
+
+        /*
+         var inputEntrada = "";
+         var inputSalida = "";
+         $(document).ready(function () {
+         let valoresAntiguos = [];
+         $("input").click(function () {
+         inputEntrada = $(this).val();
+         console.log("Input de entrada: " + inputEntrada);
+         $(this).parents("tr").find("input").each(function () {
+         valoresAntiguos.push($(this).val());
+         });
+         });
+         $("input").focusout(function () {
+         inputSalida = $(this).val();
+         console.log("Input de salida: " + inputSalida);
+         if (inputSalida !== inputEntrada) {
+         let valoresNuevos = [];
+         $(this).parents("tr").find("input").each(function () {
+         valoresNuevos.push($(this).val());
+         });
+         //AJAX
+         $.ajax({
+         url: "editarAccion.do",
+         method: "POST",
+         data: {
+         valoresNuevos: JSON.stringify(valoresNuevos),
+         valoresAntiguos: JSON.stringify(valoresAntiguos),
+         
+         }
+         }).done(function (response) {
+         
+         });
+         //Término AJAX
+         } else {
+         console.log("Valores iguales");
+         }
+         });
+         
+         
+         });
+         */
+
+        var inputEntrada = "";
+        var inputSalida = "";
+        $(document).ready(function () {
+            $("input").click(function () {
+                inputEntrada = $(this).val();
+                console.log("Input de entrada: " + inputEntrada);
+
+            });
+
+            $("input").focusout(function () {
+                inputSalida = $(this).val();
+                console.log("Input de salida: " + inputSalida);
+                if (inputSalida !== inputEntrada) {
+
+                    var columna = $(this).parent();
+                    var idMes = columna.index();
+                    //AJAX
+
+                    $.ajax({
+                        url: "editarDato.do",
+                        method: "POST",
+                        data: {
+                            inputEntrada: inputEntrada,
+                            inputSalida: inputSalida,
+                            idFlujo: <%= idFlujo%>,
+                            idMes: idMes
+                        }
+                    }).done(function (response) {
+                        headers.length = 0;
+                    });
+                    //Término AJAX
+                } else {
+                    console.log("Valores iguales");
+                }
+            });
+
+
+        });
+
+
     </script>
 
 </html>

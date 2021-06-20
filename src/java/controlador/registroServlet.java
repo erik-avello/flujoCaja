@@ -71,7 +71,7 @@ public class registroServlet extends HttpServlet {
                     System.out.println("siguiente objeto");
                     //reinicio del contador para el idmes
                     contMes = mesInicial;
-
+                    
                     //se rescata el jsonobject de la lista
                     JsonObject jsonObject = (JsonObject) array.get(i);
                     System.out.println(jsonObject);
