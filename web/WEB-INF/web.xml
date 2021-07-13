@@ -8,6 +8,10 @@
         <servlet-name>editarDato_Servlet</servlet-name>
         <servlet-class>controlador.editarDato_Servlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>registroEgresosServlet</servlet-name>
+        <servlet-class>controlador.registroEgresosServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>editarAccion_Servlet</servlet-name>
         <url-pattern>/editarAccion.do</url-pattern>
@@ -15,6 +19,10 @@
     <servlet-mapping>
         <servlet-name>editarDato_Servlet</servlet-name>
         <url-pattern>/editarDato.do</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>registroEgresosServlet</servlet-name>
+        <url-pattern>/registroEgresos.do</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

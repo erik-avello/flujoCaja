@@ -4,6 +4,7 @@
     Author     : rivaa
 --%>
 
+<%@page import="java.util.stream.Collectors"%>
 <%@page import="dao.DAO_RegistroTabla"%>
 <%@page import="model.registroDatosFlujo"%>
 <%@page import="model.Flujo"%>
@@ -30,7 +31,7 @@
 
     //int idFlujoRequest = Integer.parseInt(request.getParameter("idFlujo"));
     //Flujo flujo = dao_flujo.getFlujo(idFlujoRequest);
-    int idFlujo = 1;
+    int idFlujo = Integer.parseInt(request.getParameter("idFlujo"));
 
     List<registroDatosFlujo> listaRegistro = dao_registro.getRegistrosIngresoPorId(idFlujo);
     if (listaRegistro.isEmpty()) {
@@ -38,7 +39,6 @@
     }
 
     int idTipo = 1;
-
     int mesInicial = -1;
     int acumulador = 1;
 
@@ -64,8 +64,10 @@
     </head>
 
     <body>
-        <% if (listaRegistro != null) { %>
+        <% if (listaRegistro != null) {
+        %>
 
+        <br>
         <div class="container">
             <div class="table-responsive">
                 <table class="table table-bordered" id="tablaFinanzas">
@@ -73,12 +75,14 @@
                         <tr id="columnaTabla">
                             <th>Ingresos</th>
                                 <%
-                                    String accionRepetidaTitlle = "";
-                                    for (int i = 0; i < listaRegistro.size(); i++) {
-                                        accionRepetidaTitlle = listaRegistro.get(i).getAccion();
+                                    List<registroDatosFlujo> listaRegistroIngresos = dao_registro.getRegistrosIngresoPorIdIngresos(idFlujo);
 
-                                        for (int j = 0; j < listaRegistro.size(); j++) {
-                                            if (accionRepetidaTitlle.equals(listaRegistro.get(j).getAccion())) {
+                                    String accionRepetidaTitlle = "";
+                                    for (int i = 0; i < listaRegistroIngresos.size(); i++) {
+                                        accionRepetidaTitlle = listaRegistroIngresos.get(i).getAccion();
+
+                                        for (int j = 0; j < listaRegistroIngresos.size(); j++) {
+                                            if (accionRepetidaTitlle.equals(listaRegistroIngresos.get(j).getAccion())) {
                                                 out.print("<th>" + dao_mes.getMesPorId(j + 1).getNombre() + "</th>");
                                                 i++;
                                             }
@@ -86,40 +90,42 @@
                                         break;
                                     }
 
-                                    String accion = "";
+                                    List<String> arraylist = new ArrayList();
+                                    for (int idx = 0; idx < listaRegistroIngresos.size(); idx++) {
+                                        arraylist.add(listaRegistroIngresos.get(idx).getAccion());
 
-                                    int accionRepetida = 0;
-
-                                    for (int i = 0; i < listaRegistro.size(); i++) {
-                                        accion = listaRegistro.get(i).getAccion();
-                                        accionRepetida = 0;
-                                        out.println("<tr>");
-                                        out.println("<td class=td><input type=text class=form-control value='" + accion + "'></td>");
-                                        for (int j = 0; j < listaRegistro.size(); j++) {
-                                            if (accion.equals(listaRegistro.get(j).getAccion())) {
-                                                out.println("<td class=td ><input type=text class=form-control value='" + listaRegistro.get(j).getDato() + "'></td>");
-                                                i++;
-                                                accionRepetida++;
-                                            }
-                                        }
-                                        out.println("</tr>");
                                     }
+                                    arraylist = (List) arraylist.stream().distinct().collect(Collectors.toList());
+
+                                    for (int i = 0; i < arraylist.size(); i++) {
+                                        out.println("<tr>");
+                                        out.println("<td class=td><input type=text class=form-control value='" + arraylist.get(i) + "'></td>");
+                                        try {
+                                            for (int j = 0; j < listaRegistroIngresos.size(); j++) {
+                                                if (arraylist.get(i).equals(listaRegistroIngresos.get(j).getAccion())) {
+                                                    out.println("<td class=td ><input type=text class=form-control value='" + listaRegistroIngresos.get(j).getDato() + "'></td>");
+                                                } else {
+
+                                                }
+                                            }
+                                        } catch (Exception e) {
+                                        }
+
+                                        out.println("</tr>");
+
+                                    }
+
                                 %>
                         </tr>
                     </thead>
-                    <%
-                    %>
+
+                    <tfoot id="pieIngresos">
+                    <th>Total ingresos</th>
+                    </tfoot>
+
                 </table>
-                <div class="">
-                    <button type="button" class="btn btn-success" onclick="agregarFila()">Agregar fila</button>
-                    <button type="button" class="btn btn-danger" onclick="eliminarFila()">Eliminar fila</button>
-                    <button type="button" class="btn btn-success" onclick="agregarColumna()">Agregar columna</button>
-                    <button type="button" class="btn btn-danger" onclick="eliminarColumna()">Eliminar columna</button>
-                </div>
+
             </div>
-
-
-            <br>
             <hr>
 
         </div>
@@ -130,20 +136,76 @@
                     <thead class="thead-dark">
                         <tr id="columnaTablaDos">
                             <th>Egresos</th>
+                                <%                                    List<registroDatosFlujo> listaRegistroEgresos = dao_registro.getRegistrosIngresoPorIdEgresos(idFlujo);
+                                    String accionRepetidaTitlleEgresos = "";
+                                    for (int i = 0; i < listaRegistroEgresos.size(); i++) {
+                                        accionRepetidaTitlleEgresos = listaRegistroEgresos.get(i).getAccion();
 
+                                        for (int j = 0; j < listaRegistroEgresos.size(); j++) {
+                                            if (accionRepetidaTitlleEgresos.equals(listaRegistroEgresos.get(j).getAccion())) {
+                                                out.print("<th>" + dao_mes.getMesPorId(j + 1).getNombre() + "</th>");
+                                                i++;
+                                            }
+                                        }
+                                        break;
+                                    }
+
+                                    List<String> arraylistEgresos = new ArrayList();
+                                    for (int idx = 0; idx < listaRegistroEgresos.size(); idx++) {
+                                        arraylistEgresos.add(listaRegistroEgresos.get(idx).getAccion());
+
+                                    }
+                                    arraylistEgresos = (List) arraylistEgresos.stream().distinct().collect(Collectors.toList());
+
+                                    for (int i = 0; i < arraylistEgresos.size(); i++) {
+                                        out.println("<tr>");
+                                        out.println("<td class=td><input type=text class=form-control value='" + arraylistEgresos.get(i) + "'></td>");
+                                        try {
+                                            for (int j = 0; j < listaRegistroEgresos.size(); j++) {
+                                                if (arraylistEgresos.get(i).equals(listaRegistroEgresos.get(j).getAccion())) {
+                                                    out.println("<td class=td ><input type=text class=form-control value='" + listaRegistroEgresos.get(j).getDato() + "'></td>");
+                                                } else {
+
+                                                }
+                                            }
+                                        } catch (Exception e) {
+                                        }
+
+                                        out.println("</tr>");
+
+                                    }
+
+                                %>
                         </tr>
                     </thead>
+                    <tfoot id="pieEgresos">
+                    <th>Total egresos</th>
+                    </tfoot>
                 </table>
-                <div class="">
-                    <button type="button" class="btn btn-success" onclick="agregarFilaEgreso()">Agregar fila</button>
-                    <button type="button" class="btn btn-danger" onclick="eliminarFilaEgreso()">Eliminar fila</button>
-                    <button type="button" class="btn btn-success" onclick="agregarColumnaEgreso()">Agregar columna</button>
-                    <button type="button" class="btn btn-danger" onclick="eliminarColumnaEgreso()">Eliminar columna</button>
-                </div>
+
             </div>
-            <br>
             <hr>
-            <button type="button" class="btn btn-success" id="guardarCambios" onclick="guardarCambios()">Guardar avance</button> 
+            <div>
+                <table class="table table-bordered" id="tablaCashFlow">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th align="center">
+                                Total Ingresos
+                            </th>
+                            <th align="center">
+                                Total Egresos
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                        
+                    <tfoot id="pieCashFlow">
+                        <th align="center">Total Cashflow</th>
+                    </tfoot>
+                </table>
+            </div>
         </div>
 
         <% } else {%>
@@ -154,7 +216,9 @@
                     <thead class="thead-dark">
                         <tr id="columnaTabla">
                             <th>Ingresos</th>
-                                <%if (mesInicial != -1) {%>
+                                <%if (mesInicial != -1) {
+                                        System.out.println("Entra aqui!!! al mes inicial");
+                                %>
                             <th><%= lista.get(mesInicial - 1).getNombre()%></th>
                             <th><%= lista.get(mesInicial).getNombre()%></th>
                             <th><%= lista.get(mesInicial + 1).getNombre()%></th>  
@@ -174,23 +238,39 @@
             </div>
             <br>
             <hr>
-            <button type="button" class="btn btn-success" id="guardarCambios" onclick="guardarCambios()">Guardar avance</button> 
+            <button type="button" class="btn btn-success" id="guardarCambios" onclick="guardarCambios()">Guardar avance de Ingresos</button> 
+
+
         </div> 
+        <br>
+        <div class="container">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="tablaFinanzasDos">
+                    <thead class="thead-dark">
+                        <tr id="columnaTablaDos">
+                            <th>Egresos</th>
+
+                        </tr>
+                    </thead>
+
+                </table>
+                <div class="">
+                    <button type="button" class="btn btn-success" onclick="agregarFilaEgreso()">Agregar fila</button>
+                    <button type="button" class="btn btn-danger" onclick="eliminarFilaEgreso()">Eliminar fila</button>
+                    <button type="button" class="btn btn-success" onclick="agregarColumnaEgreso()">Agregar columna</button>
+                    <button type="button" class="btn btn-danger" onclick="eliminarColumnaEgreso()">Eliminar columna</button>
+                </div>
+            </div>
+            <br>
+            <hr>
+            <button type="button" class="btn btn-success" id="guardarCambios" onclick="guardarCambiosEgresos()">Guardar avance de Egresos</button> 
+
+
+        </div>
 
         <%}%>
 
-        <div>
-            <%
-                if (mesInicial == -1) {%>
-            <form action="menu.jsp" method="POST">
-                <input type="number" name="mesInicial" placeholder="INGRESE MES A INICIAR SISTEMA">
-                <input type="submit" value="INICIAR">
-            </form>
-            <%} else {%>
-            <h1>INICIO FLUJO</h1>
-            <%}
-            %>
-        </div>
+
 
         <h1>Menu Principal</h1>
         <%
@@ -518,7 +598,7 @@
                 data: {
                     datos: JSON.stringify(datos),
                     datosEgresos: JSON.stringify(datosEgresos),
-                    "idTipo": <%= idTipo%>,
+                    "idTipo": 1,
                     "idFlujo": <%= idFlujo%>,
                     idPrimermes: <%= mesInicial%>
                 }
@@ -528,51 +608,82 @@
 
         }
 
+        function guardarCambiosEgresos() {
+            let atributos = [];
+            document.querySelectorAll('#tablaFinanzas thead th').forEach(elemento => {
+                atributos.push(elemento.innerText);
+            });
+            let datos = [];
+            document.querySelectorAll('#tablaFinanzas thead tr').forEach(fila => {
+
+                let dato = {};
+                atributos.forEach(campo => {
+                    dato[campo] = '';
+                });
+                fila.querySelectorAll('td').forEach((elemento, n) => {
+                    let input = elemento.querySelector('input');
+
+                    if (input !== null) {
+                        dato[atributos[n]] = input.value;
+                    } else {
+                        dato[atributos[n]] = elemento.innerText;
+                    }
+                });
+                datos.push(dato);
+            });
+
+
+            let egresos = [];
+            document.querySelectorAll('#tablaFinanzasDos thead th').forEach(elemento => {
+                egresos.push(elemento.innerText);
+            });
+            let datosEgresos = [];
+            document.querySelectorAll('#tablaFinanzasDos thead tr').forEach(fila => {
+                let datoEgreso = {};
+                egresos.forEach(campo => {
+                    datoEgreso[campo] = '';
+                });
+                fila.querySelectorAll('td').forEach((elemento, n) => {
+                    let input = elemento.querySelector('input');
+
+                    if (input !== null) {
+                        datoEgreso[egresos[n]] = input.value;
+                    } else {
+                        datoEgreso[egresos[n]] = elemento.innerText;
+                    }
+                });
+                datosEgresos.push(datoEgreso);
+            });
+
+
+        <%
+            if (mesInicial == -1) {
+                mesInicial = 1;
+            }
+        %>
+
+            $.ajax({
+                url: "registroEgresos.do",
+                method: "POST",
+                data: {
+                    datos: JSON.stringify(datos),
+                    datosEgresos: JSON.stringify(datosEgresos),
+                    "idTipo": 2,
+                    "idFlujo": <%= idFlujo%>,
+                    idPrimermes: <%= mesInicial%>
+                }
+            }).done(function (response) {
+
+            });
+
+        }
+
+
         $(document).on('click', 'input', function () {
             $(this).prop('readonly', false);
         });
 
-        /*
-         var inputEntrada = "";
-         var inputSalida = "";
-         $(document).ready(function () {
-         let valoresAntiguos = [];
-         $("input").click(function () {
-         inputEntrada = $(this).val();
-         console.log("Input de entrada: " + inputEntrada);
-         $(this).parents("tr").find("input").each(function () {
-         valoresAntiguos.push($(this).val());
-         });
-         });
-         $("input").focusout(function () {
-         inputSalida = $(this).val();
-         console.log("Input de salida: " + inputSalida);
-         if (inputSalida !== inputEntrada) {
-         let valoresNuevos = [];
-         $(this).parents("tr").find("input").each(function () {
-         valoresNuevos.push($(this).val());
-         });
-         //AJAX
-         $.ajax({
-         url: "editarAccion.do",
-         method: "POST",
-         data: {
-         valoresNuevos: JSON.stringify(valoresNuevos),
-         valoresAntiguos: JSON.stringify(valoresAntiguos),
-         
-         }
-         }).done(function (response) {
-         
-         });
-         //Término AJAX
-         } else {
-         console.log("Valores iguales");
-         }
-         });
-         
-         
-         });
-         */
+
 
         var inputEntrada = "";
         var inputSalida = "";
@@ -582,7 +693,6 @@
                 console.log("Input de entrada: " + inputEntrada);
 
             });
-
             $("input").focusout(function () {
                 inputSalida = $(this).val();
                 console.log("Input de salida: " + inputSalida);
@@ -613,6 +723,86 @@
 
         });
 
+
+        let cashflowIngreso = 0;
+
+        //CODIGO TFOOTER TABLA DE INGRESOS
+        $(document).ready(function () {
+
+            const filas = document.querySelectorAll("#tablaFinanzas tr");
+            const columnas = document.querySelectorAll("#tablaFinanzas thead th");
+
+            for (let i = 1; i < columnas.length; i++) {
+                let total = [];
+                let suma = 0;
+
+                filas.forEach((fila) => {
+                    total.push(fila.querySelectorAll("input")[i]);
+                });
+
+
+                for (var j = 1; j < total.length; ++j) {
+                    if (total[j] === undefined) {
+                        console.log("no definido");
+                    } else {
+                        suma = suma + parseFloat(total[j].value);
+                        console.log("columna sumada: " + suma);
+                    }
+
+                }
+                $('#pieIngresos tr').append('<th align=center>' + suma + '</th>')
+                cashflowIngreso = cashflowIngreso + suma;
+                suma = 0;
+
+            }
+
+        });
+
+        let cashflowEgreso = 0;
+        //CODIGO TFOOTER TABLA DE EGRESOS
+        $(document).ready(function () {
+
+            const filas = document.querySelectorAll("#tablaFinanzasDos tr");
+            const columnas = document.querySelectorAll("#tablaFinanzasDos thead th");
+
+            for (let i = 1; i < columnas.length; i++) {
+                let total = [];
+                let suma = 0;
+
+                filas.forEach((fila) => {
+                    total.push(fila.querySelectorAll("input")[i]);
+                });
+
+
+                for (var j = 1; j < total.length; ++j) {
+                    if (total[j] === undefined) {
+                        console.log("no definido");
+                    } else {
+                        suma = suma + parseFloat(total[j].value);
+                        console.log("columna sumada: " + suma);
+
+                    }
+
+                }
+                $('#pieEgresos tr').append('<th align=center>' + suma + '</th>')
+                cashflowEgreso = cashflowEgreso + suma;
+                suma = 0;
+
+            }
+
+        });
+
+        // CÓDIGO PARA CALCULAR EL CASHFLOW
+        $(document).ready(function () {
+            $('#tablaCashFlow tbody').append('<td align=center>' + cashflowIngreso + '</td>')
+            $('#tablaCashFlow tbody').append('<td align=center>' + cashflowEgreso + '</td>')
+            
+            let totalCashflow = cashflowEgreso / cashflowIngreso;
+            let cashFlowFinal = totalCashflow * 100;
+            console.log(totalCashflow);
+            $('#pieCashFlow tr').append('<td align=center>' + cashFlowFinal + '</td>')
+
+        });
 
     </script>
 

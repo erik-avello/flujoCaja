@@ -42,8 +42,8 @@ public class DAO_Flujo extends Conexion implements DAO<Flujo>{
         return lista;
     }
     
-    public Flujo getFlujo(int id) throws SQLException{
-        ResultSet rs = ejecutar("SELECT * FROM FLUJO WHERE id = '"+id+"';");
+    public Flujo getFlujo(int id, int idUsuario) throws SQLException{
+        ResultSet rs = ejecutar("SELECT * FROM FLUJO WHERE id = '"+id+"' AND id_usuario_fk = '"+idUsuario+"';");
         Flujo f = null;
         
         if(rs.next()){

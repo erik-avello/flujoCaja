@@ -1,6 +1,5 @@
 package controlador;
 
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,51 +37,36 @@ public class registroServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-
             String accion = request.getParameter("accion");
             int idFlujo = Integer.parseInt(request.getParameter("idFlujo"));
-            System.out.println("-------------------");
-            System.out.println(idFlujo);
-            System.out.println("-------------------");
             int idTipo = Integer.parseInt(request.getParameter("idTipo"));
-            System.out.println("-------------------");
-            System.out.println(idTipo);
-            System.out.println("-------------------");
             String loqueviene = request.getParameter("datos");
             String datosEgresos = request.getParameter("datosEgresos");
-            
-            try {
 
+            try {
                 int mesInicial = Integer.parseInt(request.getParameter("idPrimermes"));
                 int contMes = 0;
 
-                System.out.println("-----------------------------");
-                System.out.println("-----------------------------");
-                System.out.println(mesInicial);
-                System.out.println("-----------------------------");
-                System.out.println("-----------------------------");
-
                 JsonArray array = convertirJSONArray(loqueviene);
                 JsonArray arrayEgresos = convertirJSONArray(datosEgresos);
-                
+
                 List<GuardarDatos> lista = new ArrayList<>();
 
                 for (int i = 1; i < array.size(); i++) {
-                    System.out.println("siguiente objeto");
                     //reinicio del contador para el idmes
                     contMes = mesInicial;
-                    
+
                     //se rescata el jsonobject de la lista
                     JsonObject jsonObject = (JsonObject) array.get(i);
                     System.out.println(jsonObject);
                     System.out.println("-------------------------------------------");
 
                     for (int j = 1; j < jsonObject.size(); j++) {
-                        //nombre accion puede ser ya sea sueldo/bono/hierba/etc
+                        //nombre accion puede ser ya sea sueldo/bono/etc
                         String nombreAccion = new Gson().toJson(jsonObject.get("Ingresos"));
                         String nombreAccionReplace = nombreAccion.replaceAll("^[\"']+|[\"']+$", "");
                         System.out.println(nombreAccion);
-
+                        
                         //aqui vamos rescatando los meses por el id;
                         //el id esta sacado por un contador el cual se reinicia al id inicial cada vez que se pasa
                         //a un uevo objeto json
@@ -93,13 +77,11 @@ public class registroServlet extends HttpServlet {
                         //y ademas pertenece a la accion antes rescatada
                         //es decir, el siguiente dato de la lista
                         String dato = new Gson().toJson(jsonObject.get(mes.getNombre()));
-                        
+
                         String result = dato.replaceAll("^[\"']+|[\"']+$", "");
-                        
+
                         System.out.println(result);
-                        
-                        
-                        
+
                         //ej de insert
                         //null, nombreAccion, mes.getid, dato
                         new DAO_RegistroTabla().insertRegistros(String.valueOf(idFlujo), String.valueOf(idTipo), nombreAccionReplace, mes.getId(), result);
@@ -109,7 +91,7 @@ public class registroServlet extends HttpServlet {
                 }
 
             } catch (ClassNotFoundException | SQLException ex) {
-                System.out.println("se cayo!!!!   "+ex.getLocalizedMessage());
+                System.out.println("se cayo!!!!   " + ex.getLocalizedMessage());
             }
 
             /*try {

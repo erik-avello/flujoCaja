@@ -57,7 +57,7 @@ INSERT INTO MES VALUES(null, 'Octubre');
 INSERT INTO MES VALUES(null, 'Noviembre');
 INSERT INTO MES VALUES(null, 'Diciembre');
 
-
+select * from mes;
 CREATE TABLE tipo(
     id INT AUTO_INCREMENT,
     nombre VARCHAR(100),
@@ -92,6 +92,7 @@ CREATE TABLE registroDatosFlujo(
     dato VARCHAR(10)
 );
 
+select * from flujo;
 delete from flujo;
 delete from registroDatosFlujo;
 
@@ -100,6 +101,9 @@ from registroDatosFlujo where idFlujo = 1 group by accion;
 
 
 select * from registroDatosFlujo ;
+SELECT * FROM registroDatosFlujo WHERE idFlujo = '1';
+
+insert into registroDatosFlujo values(null, 1, 1, "sueldo", 1, 20000);
 
 -- UPDATE registroDatosFlujo SET accion = 'accionNueva', dato = 'dato proveniente' where accion = 'accionAntigua' and dato = 'datoAntiguo';
 -- UPDATE registroDatosFlujo SET dato = '220000' Where dato = '210000' AND idFlujo = 1;
